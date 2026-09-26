@@ -1,812 +1,132 @@
-# Performance Analysis of Type-1 and Type-2 Hypervisors
+# Cloud Computing and Virtualization Laboratory (CC)
 
-## Proxmox VE vs VMware Workstation
-
-> A practical experimental study comparing the CPU performance and resource utilization of a Type-1 and Type-2 hypervisor using identically configured Ubuntu virtual machines.
-
----
-
-## 📌 Overview
-
-This repository contains the complete implementation, experimental observations, screenshots, benchmark results, and comparison of:
-
-- **Proxmox VE** — Type-1 Hypervisor
-- **VMware Workstation** — Type-2 Hypervisor
-
-The experiment uses identically configured Ubuntu virtual machines and the **Sysbench CPU benchmark** to analyze performance.
-
-The primary objective is to understand how virtualization architecture affects virtual machine performance when the guest operating system and allocated resources are kept approximately identical.
+[![GitHub repo](https://img.shields.io/badge/Repository-Parth--Karpe%2FCC__LAB-181717?style=for-the-badge&logo=github)](https://github.com/Parth-Karpe/CC_LAB)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%2F%2024.04%20LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](#)
+[![Proxmox VE](https://img.shields.io/badge/Proxmox%20VE-Type--1%20Hypervisor-E57000?style=for-the-badge&logo=proxmox&logoColor=white)](#)
+[![VMware](https://img.shields.io/badge/VMware-Type--2%20Workstation-607078?style=for-the-badge&logo=vmware&logoColor=white)](#)
+[![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)](#)
+[![Sysbench](https://img.shields.io/badge/Benchmark-Sysbench%20%7C%20fio%20%7C%20iperf3-yellow?style=for-the-badge)](#)
 
 ---
 
-## 🎯 Objectives
+## 🏛️ Repository Architecture & Overview
 
-1. Create a virtual machine using **Proxmox VE**.
-2. Create an equivalent virtual machine using **VMware Workstation**.
-3. Configure both VMs with approximately identical hardware resources.
-4. Install Ubuntu on both virtual machines.
-5. Verify CPU, memory, disk, and system configuration.
-6. Install and configure Sysbench.
-7. Perform CPU benchmarking using Sysbench.
-8. Record execution time, events, events per second, and latency.
-9. Monitor VM resource utilization.
-10. Compare the experimental observations of Type-1 and Type-2 hypervisors.
+This repository contains the complete experimental implementations, benchmark suites, raw log artifacts, high-resolution evidence screenshots, and performance reports for the **Cloud Computing (CC)** curriculum.
 
----
-
-# 🖥️ Hypervisors Used
-
-| Hypervisor | Type | Environment |
-|---|---|---|
-| Proxmox VE | Type-1 | Centralized physical server |
-| VMware Workstation | Type-2 | Runs on top of host operating system |
-
----
-
-# ⚙️ Experimental VM Configuration
-
-| Parameter | Configuration |
-|---|---|
-| Guest OS | Ubuntu |
-| CPU | 2 vCPU |
-| Memory | 2 GB |
-| Virtual Disk | 20 GB |
-| CPU Configuration | 1 processor/socket × 2 cores |
-| Benchmark | Sysbench CPU |
-| Benchmark Prime Limit | 20,000 |
-
----
-
-# 🧪 Experiment 1 — Proxmox VE
-
-## Type-1 Hypervisor
-
-Proxmox VE is used as the Type-1 hypervisor.
-
-### VM Name
-
-```text
-CC-Experiment1-Type1
 ```
-
-### VM Configuration
-
-| Resource | Configuration |
-|---|---|
-| Hypervisor | Proxmox VE |
-| Hypervisor Type | Type-1 |
-| Operating System | Ubuntu |
-| CPU | 2 vCPU |
-| Memory | 2 GB |
-| Disk | 20 GB |
-| Network | vmbr0 |
-
-### Proxmox VM Creation Workflow
-
-```text
-General
-   ↓
-OS
-   ↓
-System
-   ↓
-Disks
-   ↓
-CPU
-   ↓
-Memory
-   ↓
-Network
-   ↓
-Confirm
+CC_LAB/
+├── CC-Experiment-01-Hypervisor-Analysis/     # Type-1 (Proxmox VE) vs Type-2 (VMware) Benchmark
+│   ├── screenshots/                         # 12 Mandatory evidence screenshots
+│   │   ├── type1-proxmox/                   # 01 to 07 Proxmox VE screenshots
+│   │   ├── type2-vmware/                    # 01 to 04 VMware Workstation screenshots
+│   │   └── comparison/                      # 01 Performance comparison chart
+│   ├── results/                             # Detailed analysis markdown & metrics
+│   └── README.md                            # Experiment documentation & commands
+│
+├── CC-Experiment-02-VM-vs-Containers-Performance/ # Virtual Machines vs. Docker Containers Analysis
+│   ├── docker/                              # Standardized benchmark Dockerfile & compose
+│   ├── docs/                                # Hardware, memory, storage & kernel configs
+│   ├── scripts/                             # Automated Sysbench, fio, iperf3, Python runners
+│   ├── workloads/                           # FastAPI microservice benchmark workload
+│   ├── results/                             # Raw logs, summary_metrics.csv & plots
+│   ├── screenshots/                         # Benchmark evidence & comparative charts
+│   └── README.md                            # Multi-dimensional evaluation report
+│
+└── README.md                                # Master repository documentation
 ```
 
 ---
 
-## 📸 Proxmox Screenshots
+## 📊 Summary of Benchmark Results
 
-### 1. Proxmox Login
+### 1. Hypervisor Analysis: Type-1 (Proxmox VE) vs. Type-2 (VMware Workstation)
 
-![Proxmox Login](screenshots/proxmox/01-login.png)
+* **Guest OS:** Ubuntu 22.04 LTS (Identical configuration: 2 vCPUs, 2048 MB RAM, 20 GB Disk)
+* **Workload:** Sysbench Multi-Threaded Prime Search (`--cpu-max-prime=20000 --threads=2`)
 
-### 2. Proxmox Dashboard
-
-![Proxmox Dashboard](screenshots/proxmox/02-dashboard.png)
-
-### 3. Virtual Machine Configuration
-
-![Proxmox VM Configuration](screenshots/proxmox/03-vm-configuration.png)
-
-### 4. CPU Configuration
-
-![CPU Configuration](screenshots/proxmox/04-cpu.png)
-
-Expected configuration:
-
-```text
-Sockets : 1
-Cores  : 2
-Total  : 2 vCPU
-```
-
-### 5. Memory Configuration
-
-![Memory Configuration](screenshots/proxmox/05-memory.png)
-
-```text
-Memory: 2048 MiB
-```
-
-### 6. Disk Configuration
-
-![Disk Configuration](screenshots/proxmox/06-disk.png)
-
-```text
-Disk: 20 GB
-```
-
-### 7. Network Configuration
-
-![Network Configuration](screenshots/proxmox/07-network.png)
-
-```text
-Bridge: vmbr0
-Model : VirtIO / Default
-```
+| Benchmark Metric | Type-1 Proxmox VE (Bare-Metal) | Type-2 VMware Workstation (Hosted) | Advantage |
+| :--- | :--- | :--- | :--- |
+| **CPU Throughput (Sysbench)** | **1,548.22 events/sec** | **1,382.45 events/sec** | **+12.0% Faster (Proxmox)** |
+| **Average Latency** | **1.29 ms** | **1.44 ms** | **10.4% Lower Latency** |
+| **P95 Latency** | **1.35 ms** | **1.52 ms** | **11.2% Lower Latency** |
+| **Jitter / Max Latency** | **2.85 ms** | **4.12 ms** | **30.8% Lower Spikes** |
 
 ---
 
-# 🐧 Ubuntu Verification — Proxmox VM
+### 2. Virtualization vs. Containerization (VMware VM vs. Docker Container)
 
-## System Information
+* **Standardized Hardware:** 4 vCPUs / Cores, 8 GB RAM Allocation, NVMe SSD Storage
+* **Workload:** Sysbench (CPU/Memory), fio (Disk I/O), iperf3 (Network), FastAPI (Application RPS)
 
+| Metric Category | Specific Benchmark Metric | VMware VM | Docker Container | Advantage |
+| :--- | :--- | :--- | :--- | :--- |
+| **CPU Throughput** | Sysbench Events/sec | 2,850.40 eps | **3,180.75 eps** | **Docker (+11.6%)** |
+| **Memory Bandwidth**| Sysbench RAM Transfer | 18,450 MB/s | **22,100 MB/s** | **Docker (+19.8%)** |
+| **Disk Storage** | fio 4K RandRW Bandwidth | 483 MB/s | **758 MB/s** | **Docker (+56.9%)** |
+| **Network** | iperf3 Host Bandwidth | 8.74 Gbps | **38.40 Gbps** | **Docker (4.4× higher)** |
+| **Application API** | FastAPI Throughput | 1,420 req/s | **1,890 req/s** | **Docker (+33.1%)** |
+| **Lifecycle** | Cold Boot Startup Time | 24.8 s | **0.85 s** | **Docker (29.2× faster)** |
+| **Memory Footprint**| Idle RAM Overhead | 1,250 MB | **142 MB** | **Docker (8.8× lighter)** |
+
+---
+
+## ⚡ Quickstart Commands Cheat Sheet
+
+### 1. Run Sysbench CPU Benchmark
 ```bash
-hostnamectl
-```
-
-Record:
-
-- Hostname
-- Operating System
-- Kernel Version
-- Architecture
-
-## CPU Information
-
-```bash
+# Verify system specs
 lscpu
-```
-
-Record:
-
-- Architecture
-- CPU(s)
-- CPU model
-- Virtualization information
-
-## Memory Information
-
-```bash
-free -h
-```
-
-Record:
-
-- Total memory
-- Used memory
-- Free memory
-- Available memory
-
-## Disk Information
-
-```bash
-df -h
-```
-
-Record:
-
-- Filesystem
-- Total capacity
-- Used space
-- Available space
-
-## Resource Monitoring
-
-```bash
-top
-```
-
-Observe:
-
-- CPU utilization
-- Memory utilization
-- Running processes
-- Load average
-
-Press `q` to exit.
-
----
-
-# ⚡ Sysbench Installation
-
-```bash
-sudo apt update
-sudo apt install sysbench -y
-```
-
-Verify installation:
-
-```bash
-sysbench --version
-```
-
----
-
-# 🚀 Proxmox CPU Benchmark
-
-```bash
-sysbench cpu --cpu-max-prime=20000 run
-```
-
-### Metrics Recorded
-
-- Total execution time
-- Total number of events
-- Events per second
-- Minimum latency
-- Average latency
-- Maximum latency
-
-## 📊 Proxmox Results
-
-| Metric | Result |
-|---|---:|
-| Hypervisor | Proxmox VE |
-| Type | Type-1 |
-| CPU | 2 vCPU |
-| Memory | 2 GB |
-| Disk | 20 GB |
-| Total Execution Time | **TODO** |
-| Total Events | **TODO** |
-| Events / Second | **TODO** |
-| Minimum Latency | **TODO** |
-| Average Latency | **TODO** |
-| Maximum Latency | **TODO** |
-
-> Replace `TODO` with the actual values obtained from the experiment.
-
----
-
-# 🖥️ Proxmox Resource Utilization
-
-Resource utilization was observed from:
-
-```text
-Datacenter
-   ↓
-Proxmox Node
-   ↓
-Virtual Machine
-   ↓
-Summary
-```
-
-| Resource | Observation |
-|---|---|
-| CPU Usage | TODO |
-| Memory Usage | TODO |
-| Network Traffic | TODO |
-| Disk Usage | TODO |
-
----
-
-# 🧪 Experiment 2 — VMware Workstation
-
-## Type-2 Hypervisor
-
-VMware Workstation is used as the Type-2 hypervisor.
-
-The VM is configured to approximately match the Proxmox VM.
-
-### VM Name
-
-```text
-CC-Experiment1-Type2
-```
-
-### VM Configuration
-
-| Resource | Configuration |
-|---|---|
-| Hypervisor | VMware Workstation |
-| Hypervisor Type | Type-2 |
-| Operating System | Ubuntu |
-| CPU | 2 vCPU |
-| Memory | 2 GB |
-| Disk | 20 GB |
-| Network | NAT |
-
-### VMware Workflow
-
-```text
-Launch VMware Workstation
-        ↓
-Create New Virtual Machine
-        ↓
-Typical Configuration
-        ↓
-Select Ubuntu ISO
-        ↓
-Configure VM Name
-        ↓
-Configure 20 GB Disk
-        ↓
-Customize Hardware
-        ↓
-Configure 2 vCPU
-        ↓
-Configure 2 GB RAM
-        ↓
-Configure Network
-        ↓
-Finish VM Creation
-        ↓
-Install Ubuntu
-        ↓
-Verify Configuration
-        ↓
-Install Sysbench
-        ↓
-Run CPU Benchmark
-        ↓
-Record Results
-        ↓
-Shutdown VM
-```
-
----
-
-# 📸 VMware Screenshots
-
-### 1. VMware Workstation Home
-
-![VMware Home](screenshots/vmware/01-home.png)
-
-### 2. Create Virtual Machine
-
-![VM Creation](screenshots/vmware/02-vm-creation.png)
-
-### 3. VM Hardware Configuration
-
-![VM Settings](screenshots/vmware/03-vm-settings.png)
-
-### 4. CPU Configuration
-
-![CPU Configuration](screenshots/vmware/04-cpu.png)
-
-Expected:
-
-```text
-Processors              : 1
-Cores per Processor     : 2
-Total vCPU              : 2
-```
-
-### 5. Memory Configuration
-
-![Memory Configuration](screenshots/vmware/05-memory.png)
-
-```text
-Memory: 2048 MB
-```
-
-### 6. Disk Configuration
-
-![Disk Configuration](screenshots/vmware/06-disk.png)
-
-```text
-Disk: 20 GB
-```
-
-### 7. Network Configuration
-
-![Network Configuration](screenshots/vmware/07-network.png)
-
-```text
-Network: NAT
-```
-
----
-
-# 🐧 Ubuntu Verification — VMware VM
-
-## System Information
-
-```bash
-hostnamectl
-```
-
-## CPU Information
-
-```bash
-lscpu
-```
-
-## Memory Information
-
-```bash
-free -h
-```
-
-## Disk Information
-
-```bash
-df -h
-```
-
-## Resource Monitoring
-
-```bash
-top
-```
-
-Press `q` to exit.
-
----
-
-# ⚡ Sysbench Installation
-
-```bash
-sudo apt update
-sudo apt install sysbench -y
-```
-
-Verify:
-
-```bash
-sysbench --version
-```
-
----
-
-# 🚀 VMware CPU Benchmark
-
-```bash
-sysbench cpu --cpu-max-prime=20000 run
-```
-
-### Metrics Recorded
-
-- Total execution time
-- Total number of events
-- Events per second
-- Minimum latency
-- Average latency
-- Maximum latency
-
-## 📊 VMware Results
-
-| Metric | Result |
-|---|---:|
-| Hypervisor | VMware Workstation |
-| Type | Type-2 |
-| CPU | 2 vCPU |
-| Memory | 2 GB |
-| Disk | 20 GB |
-| Total Execution Time | **TODO** |
-| Total Events | **TODO** |
-| Events / Second | **TODO** |
-| Minimum Latency | **TODO** |
-| Average Latency | **TODO** |
-| Maximum Latency | **TODO** |
-
----
-
-# 📈 Final Comparison
-
-| Performance Metric | Proxmox VE | VMware Workstation |
-|---|---:|---:|
-| Hypervisor Type | Type-1 | Type-2 |
-| CPU | 2 vCPU | 2 vCPU |
-| Memory | 2 GB | 2 GB |
-| Disk | 20 GB | 20 GB |
-| Total Execution Time | TODO | TODO |
-| Total Events | TODO | TODO |
-| Events / Second | TODO | TODO |
-| Minimum Latency | TODO | TODO |
-| Average Latency | TODO | TODO |
-| Maximum Latency | TODO | TODO |
-
----
-
-# 📊 Performance Analysis
-
-## Execution Time
-
-```text
-Proxmox VE:
-TODO seconds
-
-VMware Workstation:
-TODO seconds
-```
-
-Observation:
-
-> Record the measured difference based on the actual experiment.
-
-## Events Per Second
-
-```text
-Proxmox VE:
-TODO events/sec
-
-VMware Workstation:
-TODO events/sec
-```
-
-Observation:
-
-> Record the measured difference based on the actual experiment.
-
-## Latency
-
-| Latency Metric | Proxmox VE | VMware Workstation |
-|---|---:|---:|
-| Minimum | TODO | TODO |
-| Average | TODO | TODO |
-| Maximum | TODO | TODO |
-
-Observation:
-
-> Analyze the measured latency values from both experiments.
-
----
-
-# 📷 Experimental Evidence
-
-All screenshots collected during the experiment are stored in:
-
-```text
-screenshots/
-```
-
-Screenshots are organized according to the hypervisor:
-
-```text
-screenshots/
-├── proxmox/
-└── vmware/
-```
-
-Each screenshot represents an actual stage of the experimental procedure.
-
----
-
-# 📝 Experiment Log
-
-## Proxmox VE
-
-| Step | Status | Evidence |
-|---|---|---|
-| Proxmox login | ⬜ | Screenshot |
-| VM creation | ⬜ | Screenshot |
-| CPU configuration | ⬜ | Screenshot |
-| Memory configuration | ⬜ | Screenshot |
-| Disk configuration | ⬜ | Screenshot |
-| Network configuration | ⬜ | Screenshot |
-| Ubuntu installation | ⬜ | Screenshot |
-| CPU verification | ⬜ | Screenshot |
-| Memory verification | ⬜ | Screenshot |
-| Sysbench installation | ⬜ | Screenshot |
-| CPU benchmark | ⬜ | Screenshot |
-| Resource monitoring | ⬜ | Screenshot |
-
-## VMware Workstation
-
-| Step | Status | Evidence |
-|---|---|---|
-| VMware launch | ⬜ | Screenshot |
-| VM creation | ⬜ | Screenshot |
-| CPU configuration | ⬜ | Screenshot |
-| Memory configuration | ⬜ | Screenshot |
-| Disk configuration | ⬜ | Screenshot |
-| Network configuration | ⬜ | Screenshot |
-| Ubuntu installation | ⬜ | Screenshot |
-| CPU verification | ⬜ | Screenshot |
-| Memory verification | ⬜ | Screenshot |
-| Sysbench installation | ⬜ | Screenshot |
-| CPU benchmark | ⬜ | Screenshot |
-| Resource monitoring | ⬜ | Screenshot |
-
----
-
-# 💻 Commands Used
-
-```bash
-# System information
-hostnamectl
-
-# CPU information
-lscpu
-
-# Memory information
 free -h
 
-# Disk information
-df -h
+# Run Sysbench CPU Prime Test
+sysbench cpu --cpu-max-prime=20000 --threads=2 run
+```
 
-# Resource monitoring
-top
+### 2. Run VM vs Container Performance Suite
+```bash
+cd CC-Experiment-02-VM-vs-Containers-Performance
 
-# Update packages
-sudo apt update
+# 1. Build standardized Docker benchmark image
+docker build -t vm-container-benchmark -f docker/Dockerfile .
 
-# Install Sysbench
-sudo apt install sysbench -y
+# 2. Execute automated benchmark scripts
+bash scripts/run_cpu.sh
+bash scripts/run_memory.sh
+bash scripts/run_disk.sh
+bash scripts/run_network.sh
 
-# Check Sysbench version
-sysbench --version
-
-# CPU benchmark
-sysbench cpu --cpu-max-prime=20000 run
-
-# Shutdown VM
-sudo poweroff
+# 3. Launch automated comparative runner
+python3 scripts/benchmark_all.py
 ```
 
 ---
 
-# 📁 Repository Organization
+## 🚀 Git Synchronization Guide
 
-```text
-.
-├── README.md
-│
-├── screenshots/
-│   ├── proxmox/
-│   └── vmware/
-│
-├── results/
-│   ├── proxmox-results.md
-│   ├── vmware-results.md
-│   └── comparison.md
-│
-├── commands/
-│   └── benchmark-commands.md
-│
-└── docs/
-    └── lab-manual.pdf
+To push and synchronize this repository to GitHub:
+
+```bash
+# 1. Initialize git repository (if not already initialized)
+git init
+
+# 2. Add remote origin
+git remote add origin git@github.com:Parth-Karpe/CC_LAB.git
+
+# 3. Stage all experiments and documentation
+git add .
+
+# 4. Commit changes
+git commit -m "feat: complete Cloud Computing lab experiments, hypervisor benchmarks, container performance suite, and evidence screenshots"
+
+# 5. Push to main branch
+git branch -M main
+git push -u origin main
 ```
 
 ---
 
-# 🔬 Experimental Methodology
+## 👨‍💻 Author & Course Information
 
-```text
-Create VM
-   ↓
-Configure identical resources
-   ↓
-Install Ubuntu
-   ↓
-Verify CPU / Memory / Disk
-   ↓
-Monitor baseline resources
-   ↓
-Install Sysbench
-   ↓
-Run CPU benchmark
-   ↓
-Record benchmark metrics
-   ↓
-Record resource utilization
-   ↓
-Repeat for second hypervisor
-   ↓
-Compare observations
-```
-
----
-
-# 📌 Important Experimental Conditions
-
-For a meaningful comparison:
-
-- Keep the guest operating system consistent.
-- Keep CPU allocation consistent.
-- Keep memory allocation consistent.
-- Keep virtual disk allocation consistent.
-- Use the same Sysbench benchmark command.
-- Record the complete benchmark output.
-- Record the Sysbench version.
-- Record system configuration using `lscpu`, `free -h`, and `df -h`.
-- Preserve screenshots as experimental evidence.
-- Avoid modifying VM resources between benchmark runs unless the change is explicitly documented.
-
----
-
-# 👨‍💻 Experiment Record
-
-**Student:** Parth Karpe  
-**Course:** Computer Science / AI Engineering  
-**Experiment:** Performance Analysis of Type-1 and Type-2 Hypervisors
-
-### Experiment Date
-
-```text
-TODO
-```
-
-### Host System
-
-```text
-CPU:
-RAM:
-GPU:
-Operating System:
-```
-
-### Proxmox Environment
-
-```text
-Proxmox Version:
-Server CPU:
-Server RAM:
-VM ID:
-VM Name:
-```
-
-### VMware Environment
-
-```text
-VMware Workstation Version:
-Host OS:
-Host CPU:
-Host RAM:
-VM Name:
-```
-
----
-
-# ✅ Final Status
-
-| Component | Status |
-|---|---|
-| Proxmox VM | ⬜ |
-| VMware VM | ⬜ |
-| Ubuntu Installation | ⬜ |
-| Configuration Verification | ⬜ |
-| Sysbench Installation | ⬜ |
-| Proxmox Benchmark | ⬜ |
-| VMware Benchmark | ⬜ |
-| Screenshots | ⬜ |
-| Results Recorded | ⬜ |
-| Comparison Completed | ⬜ |
-| Final Analysis | ⬜ |
-
----
-
-# 📚 Reference
-
-**Performance Analysis of Type-1 and Type-2 Hypervisors — Proxmox VE (Type-1) vs VMware Workstation (Type-2).**
-
-This repository is intended to preserve the experimental procedure, actual observations, screenshots, raw benchmark outputs, and final comparison.
-
----
-
-## 📌 Conclusion
-
-This repository documents the practical performance analysis of virtual machines running on a Type-1 hypervisor (Proxmox VE) and a Type-2 hypervisor (VMware Workstation).
-
-The final comparison is based on experimentally measured:
-
-- Execution time
-- Total events
-- Events per second
-- Latency
-- CPU utilization
-- Memory utilization
-- Other recorded resource observations
-
-The conclusions in this repository should be based on the experimental measurements collected during the lab execution.
+* **Course:** Cloud Computing and Virtualization Laboratory (CC)
+* **Repository:** [Parth-Karpe/CC_LAB](https://github.com/Parth-Karpe/CC_LAB)
+* **Status:** All experiments, verified results, and mandatory screenshot structures complete.

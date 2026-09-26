@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+
+# C / Compiled Binaries
+*.o
+*.obj
+*.exe
+*.out
+
+# Environments & IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs & Temporary files
+*.log
+tmp/
+scratch/
