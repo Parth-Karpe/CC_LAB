@@ -26,8 +26,10 @@ def main():
         {"Category": "Density", "Metric": "Idle Memory Footprint", "Unit": "MB", "VMware_VM": 1250.0, "Docker_Container": 142.0, "Advantage": "Docker (8.8x lighter)"}
     ]
 
-    os.makedirs("Lab-02-VM-vs-Containers-Performance/results/processed", exist_ok=True)
-    csv_file = "Lab-02-VM-vs-Containers-Performance/results/processed/summary_metrics.csv"
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    results_dir = os.path.join(base_dir, "results", "processed")
+    os.makedirs(results_dir, exist_ok=True)
+    csv_file = os.path.join(results_dir, "summary_metrics.csv")
     
     with open(csv_file, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["Category", "Metric", "Unit", "VMware_VM", "Docker_Container", "Advantage"])

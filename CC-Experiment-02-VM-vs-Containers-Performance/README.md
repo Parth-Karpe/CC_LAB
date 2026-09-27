@@ -1,4 +1,4 @@
-# Lab 2: Performance Analysis of Virtual Machines and Docker Containers
+# Experiment 2: Performance Analysis of Virtual Machines and Docker Containers
 
 [![Platform](https://img.shields.io/badge/Platform-VMware%20vs%20Docker-blue?style=flat-square)](#)
 [![OS](https://img.shields.io/badge/OS-Ubuntu%2024.04%20LTS-orange?style=flat-square)](#)
@@ -41,7 +41,7 @@ To experimentally evaluate and benchmark the performance, computational throughp
 ## 2. Directory Structure
 
 ```
-Lab-02-VM-vs-Containers-Performance/
+CC-Experiment-02-VM-vs-Containers-Performance/
 ├── docker/
 │   └── Dockerfile                 # Standardized Ubuntu 24.04 benchmark image
 ├── docs/
