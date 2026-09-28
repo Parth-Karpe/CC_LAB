@@ -129,6 +129,22 @@ Both hypervisors host identical Ubuntu 22.04 LTS virtual machines configured wit
 
 ---
 
+## 4a. Performance Graphs
+
+### CPU Throughput Comparison
+
+![CPU Throughput](results/figures/exp1-cpu-throughput.png)
+
+### Latency Comparison (Average / P95 / Max Spike)
+
+![Latency Comparison](results/figures/exp1-latency-comparison.png)
+
+### Proxmox VE Quantitative Advantage (%)
+
+![Proxmox Advantage](results/figures/exp1-proxmox-advantage.png)
+
+---
+
 ## 5. Key Observations & Conclusion
 
 1. **Type-1 Superiority:** Proxmox VE delivers **12.0% higher CPU throughput** and **10.4% lower latency** because it bypasses host operating system layers and directly interfaces with CPU virtualization rings.

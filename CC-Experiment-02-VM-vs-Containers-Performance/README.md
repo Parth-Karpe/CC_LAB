@@ -228,6 +228,38 @@ python3 scripts/benchmark_all.py
 
 ---
 
+## 4a. Performance Graphs
+
+### CPU Throughput & Latency
+
+![CPU Comparison](results/figures/exp2-cpu-comparison.png)
+
+### Memory Bandwidth & Disk I/O
+
+![Memory and Storage](results/figures/exp2-memory-storage.png)
+
+### Network & Application Throughput
+
+![Network and App](results/figures/exp2-network-app.png)
+
+### Startup Time & Memory Footprint (Lifecycle & Density)
+
+![Lifecycle and Density](results/figures/exp2-lifecycle-density.png)
+
+### Docker Overall Advantage (All Metrics)
+
+![Docker Advantage Overview](results/figures/exp2-docker-advantage-overview.png)
+
+### Sysbench CPU Thread Scaling
+
+![Sysbench CPU Scaling](results/figures/exp2-sysbench-cpu-scaling.png)
+
+### Memory Latency Percentiles
+
+![Memory Latency Percentiles](results/figures/exp2-memory-latency-percentiles.png)
+
+---
+
 ## 5. Architectural Conclusions
 
 1. **Zero Virtualization Tax in Containers:** Docker containers share the host Linux kernel directly via Cgroups and Namespaces, avoiding CPU instruction trapping, double paging tables (EPT), and hypervisor context switches.
