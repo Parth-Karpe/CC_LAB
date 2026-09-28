@@ -69,13 +69,70 @@ CC-Experiment-02-VM-vs-Containers-Performance/
 │   └── figures/
 │       └── .gitkeep
 ├── screenshots/
-│   └── .gitkeep                   # Evidence screenshots directory
+│   ├── 01-vm-toolchain-verification.png           # sysbench, fio, iperf3, kernel verification
+│   ├── 02-vm-hardware-topology.png                # vCPU allocation and free RAM snapshot
+│   ├── 03-docker-build-benchmark-image.png        # Standardized benchmark Dockerfile build
+│   ├── 04-docker-container-tool-verification.png  # Image verification & container toolchain check
+│   ├── 05-sysbench-cpu-single-thread.png          # Sysbench CPU single-thread benchmark
+│   ├── 06-sysbench-cpu-4-threads.png              # Sysbench CPU 4-thread benchmark (6,948.89 eps)
+│   ├── 07-sysbench-cpu-latency-metrics.png        # Latency statistics & thread fairness
+│   ├── 08-sysbench-cpu-8-threads.png              # 8-thread oversubscription CPU benchmark
+│   ├── 09-sysbench-memory-4-threads.png           # Sysbench memory bandwidth (123,725.89 MiB/s)
+│   └── 10-sysbench-memory-latency-analysis.png     # Memory latency distribution and percentiles
 └── README.md
 ```
 
 ---
 
-## 3. Step-by-Step Benchmark Execution
+## 3. Implementation Evidence & Real Screenshots
+
+### 1. Host Virtual Machine Environment Verification
+* **Evidence:** Verification of `sysbench`, `fio`, `iperf3`, and Linux kernel version.
+
+![01 VM Toolchain Verification](screenshots/01-vm-toolchain-verification.png)
+
+* **Evidence:** Hardware topology check showing 4 available vCPUs (`nproc`) and 7.7 GiB system RAM (`free -h`).
+
+![02 VM Hardware Topology](screenshots/02-vm-hardware-topology.png)
+
+### 2. Standardized Docker Benchmark Image Build & Verification
+* **Evidence:** Automated build of the benchmarking image using `docker build -t vm-container-benchmark -f docker/Dockerfile .`.
+
+![03 Docker Build](screenshots/03-docker-build-benchmark-image.png)
+
+* **Evidence:** Container verification via `docker images` and execution test inside the isolated benchmark container.
+
+![04 Container Tool Verification](screenshots/04-docker-container-tool-verification.png)
+
+### 3. CPU Compute Benchmarking (Sysbench Multi-Thread Scale)
+* **Evidence:** Baseline single-threaded CPU prime search (`--threads=1`) achieving 1,775.78 events/sec.
+
+![05 CPU Single Thread](screenshots/05-sysbench-cpu-single-thread.png)
+
+* **Evidence:** Multi-threaded CPU prime benchmark (`--threads=4`) achieving 6,948.89 events/sec.
+
+![06 CPU 4 Threads](screenshots/06-sysbench-cpu-4-threads.png)
+
+* **Evidence:** Latency analysis for 4-thread execution (min: 0.57ms, avg: 0.58ms, 95th percentile: 0.60ms).
+
+![07 CPU Latency Metrics](screenshots/07-sysbench-cpu-latency-metrics.png)
+
+* **Evidence:** 8-thread oversubscription benchmark (`--threads=8`) evaluating scheduling overhead and thread fairness.
+
+![08 CPU 8 Threads](screenshots/08-sysbench-cpu-8-threads.png)
+
+### 4. Memory I/O Bandwidth & Latency Benchmarking (Sysbench)
+* **Evidence:** 4-threaded memory read/write test (10 GiB total transfer) achieving **123,725.89 MiB/sec** bandwidth.
+
+![09 Memory 4 Threads](screenshots/09-sysbench-memory-4-threads.png)
+
+* **Evidence:** Memory access latency distribution (min: 0.02ms, avg: 0.03ms, max: 3.04ms, 95th percentile: 0.03ms).
+
+![10 Memory Latency Analysis](screenshots/10-sysbench-memory-latency-analysis.png)
+
+---
+
+## 4. Step-by-Step Benchmark Execution
 
 ### 1. Build Standardized Docker Benchmark Image
 

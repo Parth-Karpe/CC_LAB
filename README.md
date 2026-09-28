@@ -28,7 +28,7 @@ CC_LAB/
 │   ├── scripts/                             # Automated Sysbench, fio, iperf3, Python runners
 │   ├── workloads/                           # FastAPI microservice benchmark workload
 │   ├── results/                             # Raw logs, summary_metrics.csv
-│   ├── screenshots/                         # Evidence screenshots directory
+│   ├── screenshots/                         # 01 to 10 VM vs Docker benchmark screenshots
 │   └── README.md                            # Multi-dimensional evaluation report
 │
 ├── Type-1-Proxmox-Experimental-Record.docx  # Proxmox VE Experimental Record Document
