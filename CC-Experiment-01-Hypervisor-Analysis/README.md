@@ -51,84 +51,69 @@ Both hypervisors host identical Ubuntu 22.04 LTS virtual machines configured wit
 
 ### Part 1: Type-1 Hypervisor — Proxmox VE (Bare-Metal)
 
-#### 1. Proxmox VE Web Management Dashboard
-* **Navigation:** `https://192.168.125.100:8006` -> Server View -> Datacenter Dashboard
-* **Evidence:** Proxmox VE node dashboard displaying active node status, cluster topology, and memory mapping.
+#### 1. Proxmox VE Web Management Dashboard & VM Inventory
+* **Evidence:** Proxmox VE web interface displaying active node status, cluster inventory, and running Ubuntu VM.
 
 ![01 Proxmox Dashboard](screenshots/type1-proxmox/01-proxmox-dashboard.png)
 
 #### 2. Proxmox Virtual Machine Hardware Configuration
-* **Navigation:** Proxmox VE -> Node -> VM 100 -> Hardware / Configuration
-* **Evidence:** Hardware resource allocation showing 2 vCPUs, 2048 MB RAM, and 20 GB VirtIO SCSI disk.
+* **Evidence:** Create Virtual Machine confirmation confirming 2 cores (2 vCPUs), 2048 MiB RAM, and 20 GB disk.
 
 ![02 Proxmox VM Configuration](screenshots/type1-proxmox/02-proxmox-vm-configuration.png)
 
 #### 3. Proxmox Virtual Machine Running State
-* **Navigation:** Datacenter -> Node -> VM 100 -> Start -> Status
-* **Evidence:** VM status showing `running` state with PID 14209 on the KVM hypervisor.
+* **Evidence:** Running Ubuntu VM visible through the Proxmox environment.
 
 ![03 Proxmox VM Running](screenshots/type1-proxmox/03-proxmox-vm-running.png)
 
-#### 4. Ubuntu Guest Shell Running in Proxmox Console
-* **Navigation:** Proxmox Node -> VM 100 -> Console (noVNC)
-* **Evidence:** Interactive terminal session inside the guest OS.
+#### 4. Ubuntu Guest Console inside Proxmox
+* **Evidence:** Interactive Ubuntu console session running inside the Proxmox VM.
 
 ![04 Proxmox Ubuntu Console](screenshots/type1-proxmox/04-proxmox-ubuntu-console.png)
 
 #### 5. CPU & Memory Topology Verification
-* **Commands:** `lscpu` and `free -h`
-* **Evidence:** Output confirming 2 vCPUs, KVM virtualization flags, and 2 GB total memory.
+* **Evidence:** Terminal snapshot showing CPU/cache/virtualization details and `free -h` memory allocation.
 
 ![05 Proxmox System Configuration](screenshots/type1-proxmox/05-proxmox-system-configuration.png)
 
-#### 6. Proxmox Sysbench CPU Performance Result
-* **Command:** `sysbench cpu --cpu-max-prime=20000 --threads=2 run`
-* **Evidence:** Execution output recording **1,548.22 events/sec** and **1.29 ms average latency**.
+#### 6. Proxmox VM Summary & Live Resource Monitoring
+* **Evidence:** Summary view showing real-time CPU usage, memory utilization (1.82 GiB / 2.00 GiB), and 20 GiB boot disk.
 
-![06 Proxmox Sysbench Result](screenshots/type1-proxmox/06-proxmox-sysbench-result.png)
+![06 Proxmox Resource Monitoring](screenshots/type1-proxmox/06-proxmox-resource-monitoring.png)
 
-#### 7. Proxmox Live Resource Monitoring
-* **Navigation:** VM 100 -> Summary -> RRD Graphs
-* **Evidence:** Real-time CPU, memory, and I/O utilization graphs during the benchmark phase.
+#### 7. Proxmox Task and History Log
+* **Evidence:** Proxmox task execution and history view captured during the experiment lifecycle.
 
-![07 Proxmox Resource Monitoring](screenshots/type1-proxmox/07-proxmox-resource-monitoring.png)
+![07 Proxmox Task History](screenshots/type1-proxmox/07-proxmox-task-history.png)
+
+#### 8. Network Connectivity Verification
+* **Evidence:** ICMP ping connectivity test demonstrating successful network replies with 0% packet loss.
+
+![08 Proxmox Network Test](screenshots/type1-proxmox/08-proxmox-network-test.png)
 
 ---
 
 ### Part 2: Type-2 Hypervisor — VMware Workstation Pro (Hosted)
 
-#### 8. VMware Virtual Machine Configuration
-* **Navigation:** VMware Workstation -> Edit virtual machine settings
-* **Evidence:** Hardware settings confirming 2 processor cores, 2048 MB RAM, and 20 GB disk.
+#### 1. VMware Virtual Machine Configuration
+* **Evidence:** Hardware settings confirming processor cores, memory allocation, and virtual disk configuration.
 
 ![01 VMware VM Configuration](screenshots/type2-vmware/01-vmware-vm-configuration.png)
 
-#### 9. VMware Virtual Machine Running
-* **Navigation:** VMware Workstation -> Power On VM -> Guest Terminal
-* **Evidence:** Guest OS executing actively under VMware Workstation process layer.
+#### 2. VMware Virtual Machine Running with CPU Stress Test
+* **Evidence:** Ubuntu VM actively executing inside VMware Workstation with a 2-CPU `stress-ng` test running.
 
 ![02 VMware VM Running](screenshots/type2-vmware/02-vmware-vm-running.png)
 
-#### 10. VMware CPU & Memory Topology Verification
-* **Commands:** `lscpu` and `free -h`
-* **Evidence:** Verification of 2 VMware vCPUs and guest memory allocation.
+#### 3. Ubuntu Terminal SSH Service Status
+* **Evidence:** Guest terminal confirming `ssh.service` enablement and configuration.
 
-![03 VMware System Configuration](screenshots/type2-vmware/03-vmware-system-configuration.png)
+![03 VMware SSH Service](screenshots/type2-vmware/03-vmware-ssh-service.png)
 
-#### 11. VMware Sysbench Performance Result
-* **Command:** `sysbench cpu --cpu-max-prime=20000 --threads=2 run`
-* **Evidence:** Execution output recording **1,382.45 events/sec** and **1.44 ms average latency**.
+#### 4. Network Connectivity Verification
+* **Evidence:** ICMP ping test confirming active network connectivity with 0% packet loss.
 
-![04 VMware Sysbench Result](screenshots/type2-vmware/04-vmware-sysbench-result.png)
-
----
-
-### Part 3: Final Performance Comparison
-
-#### 12. Hypervisor Throughput and Latency Comparison Chart
-* **Evidence:** Quantitative visual comparison of compute throughput and scheduling latency.
-
-![01 Hypervisor Performance Comparison](screenshots/comparison/01-hypervisor-performance-comparison.png)
+![04 VMware Network Test](screenshots/type2-vmware/04-vmware-network-test.png)
 
 ---
 

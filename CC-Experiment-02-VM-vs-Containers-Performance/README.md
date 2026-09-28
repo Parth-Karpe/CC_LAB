@@ -67,16 +67,9 @@ CC-Experiment-02-VM-vs-Containers-Performance/
 │   ├── processed/
 │   │   └── summary_metrics.csv
 │   └── figures/
-│       └── vm_vs_container_comparison.png
+│       └── .gitkeep
 ├── screenshots/
-│   ├── 01-vm-sysbench-cpu.png
-│   ├── 02-docker-sysbench-cpu.png
-│   ├── 03-vm-fio-disk.png
-│   ├── 04-docker-fio-disk.png
-│   ├── 05-vm-iperf3-network.png
-│   ├── 06-docker-iperf3-network.png
-│   ├── 07-fastapi-latency-benchmark.png
-│   └── 08-vm-vs-container-full-comparison.png
+│   └── .gitkeep                   # Evidence screenshots directory
 └── README.md
 ```
 
@@ -110,10 +103,6 @@ docker run --rm --cpus=4 --memory=8g vm-container-benchmark \
     sysbench cpu --cpu-max-prime=20000 --threads=4 --time=30 run
 ```
 
-#### Visual Implementation Evidence:
-![01 VM CPU](screenshots/01-vm-sysbench-cpu.png)
-![02 Docker CPU](screenshots/02-docker-sysbench-cpu.png)
-
 * **VM Throughput:** `2850.40 events/sec` | Avg Latency: `1.40 ms`
 * **Docker Throughput:** `3180.75 events/sec` | Avg Latency: `1.25 ms` (**+11.6% Faster**)
 
@@ -130,10 +119,6 @@ docker run --rm -v $(pwd)/bench_data:/benchmark/data vm-container-benchmark \
     fio --name=container-randrw --directory=/benchmark/data --ioengine=libaio --rw=randrw --bs=4k --size=1G --numjobs=4 --runtime=30 --group_reporting
 ```
 
-#### Visual Implementation Evidence:
-![03 VM Disk](screenshots/03-vm-fio-disk.png)
-![04 Docker Disk](screenshots/04-docker-fio-disk.png)
-
 * **VM Storage Throughput:** `483 MB/s` (IOPS: `123.8k`)
 * **Docker Storage Throughput:** `758 MB/s` (IOPS: `194.0k`) (**+56.9% Higher Bandwidth**)
 
@@ -148,10 +133,6 @@ iperf3 -c 192.168.125.100 -t 10 -P 4
 # Inside Docker Container
 docker run --rm --network=host vm-container-benchmark iperf3 -c 127.0.0.1 -t 10 -P 4
 ```
-
-#### Visual Implementation Evidence:
-![05 VM Network](screenshots/05-vm-iperf3-network.png)
-![06 Docker Network](screenshots/06-docker-iperf3-network.png)
 
 * **VM Bandwidth:** `8.74 Gbits/sec` (Virtual network switch emulation)
 * **Docker Bandwidth:** `38.40 Gbits/sec` (Direct host loopback/interface passthrough)
@@ -168,17 +149,12 @@ uvicorn workloads.app:app --host 0.0.0.0 --port 8000 --workers 4
 python3 scripts/benchmark_all.py
 ```
 
-#### Visual Implementation Evidence:
-![07 FastAPI Benchmark](screenshots/07-fastapi-latency-benchmark.png)
-
 * **VM API Throughput:** `1,420 req/sec` | Mean Latency: `35.2 ms` | Startup: `24.8 s`
 * **Docker API Throughput:** `1,890 req/sec` | Mean Latency: `26.4 ms` | Startup: `0.85 s`
 
 ---
 
 ## 4. Multi-Metric Benchmark Comparison
-
-![08 VM vs Container Comparison](screenshots/08-vm-vs-container-full-comparison.png)
 
 | Benchmark Category | Specific Metric | VMware VM | Docker Container | Advantage |
 | :--- | :--- | :--- | :--- | :--- |

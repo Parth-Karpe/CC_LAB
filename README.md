@@ -16,10 +16,9 @@ This repository contains the complete experimental implementations, benchmark su
 ```
 CC_LAB/
 ├── CC-Experiment-01-Hypervisor-Analysis/     # Type-1 (Proxmox VE) vs Type-2 (VMware) Benchmark
-│   ├── screenshots/                         # 12 Mandatory evidence screenshots
-│   │   ├── type1-proxmox/                   # 01 to 07 Proxmox VE screenshots
-│   │   ├── type2-vmware/                    # 01 to 04 VMware Workstation screenshots
-│   │   └── comparison/                      # 01 Performance comparison chart
+│   ├── screenshots/                         # Authentic experiment evidence screenshots
+│   │   ├── type1-proxmox/                   # 01 to 08 Proxmox VE screenshots
+│   │   └── type2-vmware/                    # 01 to 04 VMware Workstation screenshots
 │   ├── results/                             # Detailed analysis markdown & metrics
 │   └── README.md                            # Experiment documentation & commands
 │
@@ -28,10 +27,12 @@ CC_LAB/
 │   ├── docs/                                # Hardware, memory, storage & kernel configs
 │   ├── scripts/                             # Automated Sysbench, fio, iperf3, Python runners
 │   ├── workloads/                           # FastAPI microservice benchmark workload
-│   ├── results/                             # Raw logs, summary_metrics.csv & plots
-│   ├── screenshots/                         # Benchmark evidence & comparative charts
+│   ├── results/                             # Raw logs, summary_metrics.csv
+│   ├── screenshots/                         # Evidence screenshots directory
 │   └── README.md                            # Multi-dimensional evaluation report
 │
+├── Type-1-Proxmox-Experimental-Record.docx  # Proxmox VE Experimental Record Document
+├── Type-2-VMware-Experimental-Record.docx   # VMware Workstation Experimental Record Document
 └── README.md                                # Master repository documentation
 ```
 
