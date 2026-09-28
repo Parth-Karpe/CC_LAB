@@ -6,9 +6,27 @@
 
 ---
 
-## 1. Project Objective
+## 1. Experiment Objectives
 
-To experimentally evaluate and benchmark the performance, computational throughput, I/O latency, startup lifecycle, and density between **Virtual Machines (VMware Workstation)** and **OS-Level Containers (Docker Community Engine)** under identical, controlled resource limits (4 vCPUs, 8 GB RAM).
+### 1.1 Aim
+To experimentally evaluate and benchmark the performance, computational throughput, I/O latency, startup lifecycle, and resource density between **Virtual Machines (VMware Workstation)** and **OS-Level Containers (Docker Community Engine)** under identical, controlled resource limits (4 vCPUs, 8 GB RAM).
+
+### 1.2 Specific Objectives
+
+| # | Objective |
+| :--- | :--- |
+| O1 | Deploy an Ubuntu 24.04 LTS VM on VMware Workstation and a standardized Docker container image with identical resource ceilings (4 vCPU / 8 GB RAM). |
+| O2 | Benchmark CPU compute performance using Sysbench prime-number workload at 1-thread, 4-thread, and 8-thread concurrency levels. |
+| O3 | Measure memory I/O bandwidth and access latency percentiles using the Sysbench memory module (10 GiB transfer). |
+| O4 | Evaluate disk storage throughput and IOPS using `fio` 4K random read/write benchmark across both environments. |
+| O5 | Measure network throughput via `iperf3` parallel streams and application-layer API throughput via a FastAPI microservice benchmark, recording startup time and memory density. |
+
+### 1.3 Hypothesis
+Docker containers are expected to outperform VMs across all metrics because they share the host Linux kernel directly via cgroups and namespaces, eliminating hypervisor CPU trapping, EPT (Extended Page Tables) overhead, and virtual I/O device emulation layers.
+
+### 1.4 Scope
+- **In scope:** CPU, memory, disk I/O, network, microservice throughput, startup lifecycle, and idle memory footprint.
+- **Out of scope:** Security isolation comparisons, GPU workloads, and Kubernetes-orchestrated deployments.
 
 ```
                         EXPERIMENTAL EVALUATION ARCHITECTURE
@@ -260,8 +278,22 @@ python3 scripts/benchmark_all.py
 
 ---
 
-## 5. Architectural Conclusions
+## 5. Key Observations & Conclusions
 
-1. **Zero Virtualization Tax in Containers:** Docker containers share the host Linux kernel directly via Cgroups and Namespaces, avoiding CPU instruction trapping, double paging tables (EPT), and hypervisor context switches.
-2. **I/O & Storage Bottlenecks in VMs:** Virtual disk images (.vmdk / qcow2) introduce virtual block layer translation, whereas container storage drivers and bind mounts utilize host page cache directly.
-3. **Agility and Density:** Containers boot sub-second and consume $8.8\times$ less idle memory, making them the optimal deployment model for cloud microservices.
+1. **CPU Throughput: Docker is 11.6% Faster** — Docker achieved **3,180.75 events/sec** vs **2,850.40 events/sec** on the VM. Containers bypass hypervisor CPU instruction trapping entirely; the host kernel schedules container threads directly on physical cores without any EPT (Extended Page Table) walkthrough, eliminating a consistent source of per-instruction overhead.
+
+2. **Memory Bandwidth: Docker Delivers 19.8% Higher Bandwidth** — Sysbench reported **22,100 MB/s** for containers vs **18,450 MB/s** for the VM. Virtual machines use shadow page tables and memory balloon drivers to manage RAM, adding translation overhead. Docker containers access host RAM through the standard kernel memory allocator with no intermediate layer, resulting in higher achievable bandwidth.
+
+3. **Disk I/O: Docker is 56.9% Faster with 56.7% Higher IOPS** — fio 4K random read/write returned **758 MB/s / 194k IOPS** for Docker versus **483 MB/s / 123.8k IOPS** for the VM. VM virtual disk images (.vmdk) introduce a virtual block layer translation path, whereas Docker bind mounts interact directly with the host page cache and filesystem, dramatically reducing I/O latency.
+
+4. **Network Throughput: Docker Achieves 4.4× Higher Bandwidth** — iperf3 recorded **38.40 Gbits/sec** for Docker (using host network passthrough) versus **8.74 Gbits/sec** for the VM (emulated virtual NIC). The VM's NAT/bridged virtual switch adds packet encapsulation and routing overhead not present in Docker's `--network=host` mode.
+
+5. **Startup Time: Docker Boots 29.2× Faster** — The VM required **24.8 seconds** of cold-start time (BIOS POST, kernel boot, service init) while a Docker container started in **0.85 seconds** — a 29.2× agility advantage. This has a direct impact on cloud auto-scaling responsiveness and rolling deployment speed.
+
+6. **Memory Density: Docker Consumes 8.8× Less Idle RAM** — The idle VM footprint was **1,250 MB** versus only **142 MB** for an equivalent Docker container. A single server that hosts 1 VM could potentially host **8–9 containers** at the same idle memory cost, making containers the decisive choice for high-density microservice deployments.
+
+7. **Sysbench Thread Scaling Efficiency** — Single-threaded throughput was **1,775.78 events/sec**, scaling to **6,948.89 events/sec** at 4 threads — a near-linear **3.91× scale factor** (98% efficiency). This confirms that the VM's vCPU scheduler was not introducing significant contention and validates the benchmark as a genuine measure of compute capability.
+
+8. **Memory Latency Stability** — Memory access latency was extremely tight: min **0.02 ms**, avg **0.03 ms**, 95th percentile **0.03 ms**, with a single max spike of **3.04 ms**. The near-zero spread between average and P95 confirms that memory bandwidth is consistent and not subject to interference from hypervisor balloon drivers or memory deduplication (KSM), which would manifest as latency spikes.
+
+> **Recommendation:** For cloud-native microservices, CI/CD workloads, and high-density deployments, Docker containers are the superior runtime. VMs remain essential where hardware-level isolation, custom kernels, or non-Linux operating systems are required.

@@ -6,11 +6,27 @@
 
 ---
 
-## 1. Project Objective & Aim
+## 1. Experiment Objectives
 
-To experimentally analyze and quantitatively compare the performance, scheduling latency, and resource overhead between:
-1. **Type-1 Hypervisor (Bare-Metal):** Proxmox Virtual Environment (KVM Kernel Module)
-2. **Type-2 Hypervisor (Hosted):** VMware Workstation Pro running on Windows Host OS
+### 1.1 Aim
+To experimentally analyze and quantitatively compare the CPU performance, scheduling latency, and resource overhead between a **Type-1 (Bare-Metal) Hypervisor** and a **Type-2 (Hosted) Hypervisor** under identical controlled workloads.
+
+### 1.2 Specific Objectives
+
+| # | Objective |
+| :--- | :--- |
+| O1 | Deploy identical Ubuntu 22.04 LTS VMs (2 vCPU / 2 GB RAM / 20 GB disk) on both Proxmox VE (Type-1) and VMware Workstation (Type-2). |
+| O2 | Execute a standardized CPU benchmark (`sysbench --cpu-max-prime=20000 --threads=2`) on both platforms under the same hardware host. |
+| O3 | Measure and record CPU throughput (events/sec), total event count, average latency, P95 latency, and maximum spike latency. |
+| O4 | Quantify the performance overhead introduced by the additional host OS layer in Type-2 hypervisors. |
+| O5 | Evaluate scheduling jitter and latency variance to assess real-time suitability of each virtualization approach. |
+
+### 1.3 Hypothesis
+Type-1 hypervisors (Proxmox VE / KVM) are expected to outperform Type-2 hypervisors (VMware Workstation) in CPU throughput and latency, because they execute guest workloads directly on hardware without the overhead of a host OS scheduling layer.
+
+### 1.4 Scope
+- **In scope:** CPU compute performance, latency analysis, scheduling jitter under a fixed synthetic workload.
+- **Out of scope:** Memory I/O, disk storage, and network benchmarking (covered in Experiment 2).
 
 Both hypervisors host identical Ubuntu 22.04 LTS virtual machines configured with identical resource limits.
 
@@ -147,6 +163,18 @@ Both hypervisors host identical Ubuntu 22.04 LTS virtual machines configured wit
 
 ## 5. Key Observations & Conclusion
 
-1. **Type-1 Superiority:** Proxmox VE delivers **12.0% higher CPU throughput** and **10.4% lower latency** because it bypasses host operating system layers and directly interfaces with CPU virtualization rings.
-2. **Context-Switch Tax in Type-2:** VMware Workstation incurs unavoidable scheduling overhead because vCPU execution threads must compete with host Windows background services.
-3. **Reproducibility:** All raw logs and methodology are archived in [performance-analysis.md](results/performance-analysis.md).
+1. **Type-1 Throughput Advantage (12.0%):** Proxmox VE achieved **1,548.22 events/sec** versus **1,382.45 events/sec** on VMware Workstation — a consistent, statistically significant **12.0% performance lead**. This is directly attributable to Proxmox's bare-metal KVM module interacting with CPU virtualization extensions (Intel VT-x / AMD-V) without an intermediate host OS scheduler.
+
+2. **Lower Average & P95 Latency on Type-1:** Proxmox VE recorded an average latency of **1.29 ms** (vs 1.44 ms on VMware) and a P95 latency of **1.35 ms** (vs 1.52 ms), confirming **10.4% and 11.2% latency reductions** respectively. Fewer scheduling layers means guest vCPUs receive hardware time slices more promptly.
+
+3. **Significantly Lower Jitter on Type-1 (30.8% reduction):** The maximum spike latency was **2.85 ms** on Proxmox versus **4.12 ms** on VMware Workstation. This 30.8% reduction in worst-case jitter makes Type-1 hypervisors far more suitable for latency-sensitive or real-time workloads.
+
+4. **Context-Switch Tax in Type-2 Hypervisors:** VMware Workstation runs as a user-space process inside Windows. Its vCPU execution threads must compete with host OS background services (Windows Update, antivirus, drivers), introducing unpredictable scheduling delays that degrade both throughput and latency stability.
+
+5. **Total Computation Advantage (1,658 Extra Events):** Over the 10-second benchmark window, Proxmox processed **15,485 total prime-number computations** versus **13,827** on VMware. This translates to ~12% more useful work done in the same wall-clock time — a critical metric for batch and HPC (High Performance Computing) workloads.
+
+6. **Hardware Virtualization Efficiency:** Type-1 hypervisors exploit hardware-assisted virtualization more efficiently because they own the CPU Ring 0 directly. Type-2 hypervisors must perform a double layer of privilege level switching (Guest → VMware process → Windows kernel → hardware), each transition adding measurable CPU cycles of overhead.
+
+7. **Practical Implication — Use-Case Driven Selection:** While Type-2 hypervisors (VMware Workstation) offer convenience for desktop development environments, the benchmarks confirm that **Type-1 hypervisors are mandatory for production cloud infrastructure**, data center deployments, and any workload where CPU performance, predictable latency, or resource density are non-negotiable requirements.
+
+> **Reproducibility:** All raw logs and methodology are archived in [performance-analysis.md](results/performance-analysis.md).
